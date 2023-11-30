@@ -49,7 +49,13 @@ const CurrencyRatesScreen = () => {
   };
 
   useEffect(() => {
-    fetchCurrencyData();
+    fetchCurrencyData(); // Первоначальная загрузка данных
+
+    const interval = setInterval(() => {
+      fetchCurrencyData(); // Периодическое обновление данных
+    }, 60000); // 60000 мс = 1 минута
+
+    return () => clearInterval(interval); // Очистка интервала при размонтировании компонента
   }, []);
 
   return (
@@ -66,6 +72,7 @@ const CurrencyRatesScreen = () => {
           </Text>
           <FlatList
             data={currencyData}
+            horizontal={false}
             keyExtractor={item => item.code}
             numColumns={2}
             renderItem={({item}) => (

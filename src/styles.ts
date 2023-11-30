@@ -11,28 +11,32 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   header: {
-    padding: 16,
+    padding: 5,
     alignItems: 'flex-start',
   },
   headerTitle: {
-    fontSize: 24,
+    fontSize: 34,
     fontWeight: 'bold',
     color: '#fff',
     textAlign: 'left',
     marginTop: 10,
+    padding: 10,
+    paddingBottom: 0,
   },
   headerSubtitle: {
     fontSize: 14,
     color: '#8e8e8e',
     textAlign: 'left',
     marginTop: 10,
+    padding: 10,
   },
   listContent: {
     alignItems: 'center',
+    width: '100%',
   },
   currencyCard: {
     margin: 10,
-    padding: 16,
+    padding: 15,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#1c1c1e',
@@ -42,6 +46,7 @@ export const styles = StyleSheet.create({
   },
   currencyName: {
     fontSize: 16,
+    fontWeight: 'normal',
     color: '#8e8e8e',
     justifyContent: 'center',
     alignItems: 'center',
