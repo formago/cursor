@@ -2,18 +2,19 @@ import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
-  StyleSheet,
   ActivityIndicator,
   FlatList,
   SafeAreaView,
 } from 'react-native';
-import axios from 'axios';
+import {fetchTodayRates, fetchYesterdayRates} from './CurrencyService';
+import {getModifiedName} from './utils';
+import {styles} from './styles';
 
 interface Rate {
   currency: string;
   code: string;
   mid: number;
-  trend?: number;
+  trend?: number | null;
 }
 
 const CurrencyRatesScreen = () => {
@@ -22,18 +23,23 @@ const CurrencyRatesScreen = () => {
 
   const fetchCurrencyData = async () => {
     try {
-      const response = await axios.get(
-        'https://api.nbp.pl/api/exchangerates/tables/A/?format=json',
-      );
-      const filteredData = response.data[0].rates.filter((rate: Rate) =>
+      const todayRates = await fetchTodayRates();
+      const yesterdayRates = await fetchYesterdayRates();
+
+      const todayData = todayRates.filter(rate =>
         ['USD', 'EUR', 'GBP', 'CZK', 'UAH', 'CHF', 'NOK', 'CNY'].includes(
           rate.code,
         ),
       );
-      const dataWithTrend = filteredData.map((rate: Rate) => ({
-        ...rate,
-        trend: parseFloat((Math.random() * (0.2 - -0.2) + -0.2).toFixed(2)),
-      }));
+
+      const dataWithTrend = todayData.map(todayRate => {
+        const yesterdayRate = yesterdayRates.find(
+          yRate => yRate.code === todayRate.code,
+        );
+        const trend = yesterdayRate ? todayRate.mid - yesterdayRate.mid : null;
+        return {...todayRate, trend};
+      });
+
       setCurrencyData(dataWithTrend);
     } catch (error) {
       console.error(error);
@@ -46,110 +52,50 @@ const CurrencyRatesScreen = () => {
     fetchCurrencyData();
   }, []);
 
-  if (loading) {
-    return (
-      <View style={styles.container}>
-        <ActivityIndicator size="large" color="#fff" />
-      </View>
-    );
-  }
-
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Walutomierz</Text>
-        <Text style={styles.headerSubtitle}>
-          Dane są automatycznie aktualizowane co minutę
-        </Text>
-      </View>
-      <FlatList
-        data={currencyData}
-        keyExtractor={item => item.code}
-        numColumns={2}
-        renderItem={({item}) => (
-          <View style={styles.currencyCard}>
-            <Text style={styles.currencyName}>{item.currency}</Text>
-            <Text style={styles.currencyRate}>{`${item.mid.toFixed(2)}`}</Text>
-            {item.trend !== undefined && (
-              <Text
-                style={
-                  item.trend >= 0 ? styles.positiveTrend : styles.negativeTrend
-                }>
-                {item.trend >= 0
-                  ? `+${item.trend.toFixed(2)}`
-                  : item.trend.toFixed(2)}
-              </Text>
+      {loading ? (
+        <View style={styles.container}>
+          <ActivityIndicator size="large" color="#fff" />
+        </View>
+      ) : (
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>Walutomierz</Text>
+          <Text style={styles.headerSubtitle}>
+            Dane są automatycznie aktualizowane co minutę
+          </Text>
+          <FlatList
+            data={currencyData}
+            keyExtractor={item => item.code}
+            numColumns={2}
+            renderItem={({item}) => (
+              <View style={styles.currencyCard}>
+                <Text style={styles.currencyName}>
+                  {getModifiedName(item.code, item.currency)}
+                </Text>
+                <Text style={styles.currencyRate}>{`${item.mid.toFixed(
+                  2,
+                )}`}</Text>
+                {item.trend !== null && (
+                  <Text
+                    style={
+                      item.trend >= 0
+                        ? styles.positiveTrend
+                        : styles.negativeTrend
+                    }>
+                    {item.trend >= 0
+                      ? `+${item.trend.toFixed(2)}`
+                      : item.trend.toFixed(2)}
+                  </Text>
+                )}
+              </View>
             )}
-          </View>
-        )}
-        contentContainerStyle={styles.listContent}
-      />
+            contentContainerStyle={styles.listContent}
+          />
+        </View>
+      )}
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#000',
-  },
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  header: {
-    padding: 16,
-    alignItems: 'flex-start',
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#fff',
-    textAlign: 'left',
-    marginTop: 10,
-  },
-  headerSubtitle: {
-    fontSize: 14,
-    color: '#8e8e8e',
-    textAlign: 'left',
-    marginTop: 10,
-  },
-  listContent: {
-    alignItems: 'center',
-  },
-  currencyCard: {
-    margin: 10,
-    padding: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#1c1c1e',
-    borderRadius: 8,
-    width: 160,
-    height: 150,
-  },
-  currencyName: {
-    fontSize: 16,
-    //fontWeight: 'bold',
-    color: '#8e8e8e',
-    justifyContent: 'center',
-    alignItems: 'center',
-    textAlign: 'center',
-  },
-  currencyRate: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#fff',
-    marginVertical: 4,
-  },
-  positiveTrend: {
-    fontSize: 18,
-    color: 'green',
-  },
-  negativeTrend: {
-    fontSize: 18,
-    color: 'red',
-  },
-});
 
 export default CurrencyRatesScreen;
