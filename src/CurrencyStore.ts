@@ -17,7 +17,7 @@ class CurrencyStore {
     makeAutoObservable(this);
   }
 
-  async fetchCurrencyData() {
+  fetchCurrencyData = async () => {
     this.setLoading(true);
     try {
       const todayResponse = await fetchRates();
@@ -43,21 +43,21 @@ class CurrencyStore {
     } finally {
       this.setLoading(false);
     }
-  }
+  };
 
-  setRates(rates: Rate[]) {
+  setRates = (rates: Rate[]) => {
     this.rates = rates;
-  }
+  };
 
-  setLoading(loading: boolean) {
+  setLoading = (loading: boolean) => {
     this.loading = loading;
-  }
+  };
 
-  private getPreviousDate(dateString: string): string {
+  private getPreviousDate = (dateString: string): string => {
     const date = new Date(dateString);
     date.setDate(date.getDate() - 1);
     return date.toISOString().split('T')[0];
-  }
+  };
 }
 
 export const currencyStore = new CurrencyStore();
