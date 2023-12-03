@@ -6,23 +6,45 @@ interface Rate {
   mid: number;
 }
 
-export const fetchRates = async (date: string): Promise<Rate[]> => {
+interface RatesResponse {
+  rates: Rate[];
+  effectiveDate: string;
+}
+
+const getPreviousDate = (dateString: string): string => {
+  const date = new Date(dateString);
+  date.setDate(date.getDate() - 1);
+  return date.toISOString().split('T')[0];
+};
+
+export const fetchRates = async (date?: string): Promise<RatesResponse> => {
+  const url = date
+    ? `https://api.nbp.pl/api/exchangerates/tables/A/${date}/?format=json`
+    : `https://api.nbp.pl/api/exchangerates/tables/A/?format=json`;
+
   try {
-    const response = await axios.get(
-      `https://api.nbp.pl/api/exchangerates/tables/A/${date}/?format=json`,
-    );
-    return response.data[0].rates;
+    const response = await axios.get(url);
+    return {
+      rates: response.data[0].rates,
+      effectiveDate: response.data[0].effectiveDate,
+    };
   } catch (error) {
     console.error('Error fetching rates:', error);
-    return [];
+    throw new Error('Failed to fetch rates');
   }
 };
 
-export const fetchTodayRates = (): Promise<Rate[]> => fetchRates('today');
+export const fetchTodayAndYesterdayRates = async (): Promise<{
+  todayRates: Rate[];
+  yesterdayRates: Rate[];
+}> => {
+  const todayResponse = await fetchRates();
+  const yesterdayResponse = await fetchRates(
+    getPreviousDate(todayResponse.effectiveDate),
+  );
 
-export const fetchYesterdayRates = (): Promise<Rate[]> => {
-  const yesterday = new Date();
-  yesterday.setDate(yesterday.getDate() - 1);
-  const dateString = yesterday.toISOString().split('T')[0];
-  return fetchRates(dateString);
+  return {
+    todayRates: todayResponse.rates,
+    yesterdayRates: yesterdayResponse.rates,
+  };
 };

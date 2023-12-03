@@ -40,9 +40,9 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#1c1c1e',
-    borderRadius: 8,
+    borderRadius: 12,
     width: 160,
-    height: 150,
+    height: 160,
   },
   currencyName: {
     fontSize: 16,
@@ -53,17 +53,17 @@ export const styles = StyleSheet.create({
     textAlign: 'center',
   },
   currencyRate: {
-    fontSize: 24,
+    fontSize: 26,
     fontWeight: 'bold',
     color: '#fff',
     marginVertical: 4,
   },
   positiveTrend: {
-    fontSize: 18,
-    color: 'green',
+    fontSize: 16,
+    color: '#30DA02',
   },
   negativeTrend: {
-    fontSize: 18,
+    fontSize: 16,
     color: 'red',
   },
 });

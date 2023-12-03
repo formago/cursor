@@ -1,3 +1,4 @@
+// CurrencyRatesScreen.tsx
 import React, {useEffect, useState} from 'react';
 import {
   View,
@@ -6,7 +7,8 @@ import {
   FlatList,
   SafeAreaView,
 } from 'react-native';
-import {fetchTodayRates, fetchYesterdayRates} from './CurrencyService';
+import resources from './resources.json';
+import {fetchTodayAndYesterdayRates} from './CurrencyService';
 import {getModifiedName} from './utils';
 import {styles} from './styles';
 
@@ -22,40 +24,52 @@ const CurrencyRatesScreen = () => {
   const [loading, setLoading] = useState(true);
 
   const fetchCurrencyData = async () => {
+    setLoading(true);
     try {
-      const todayRates = await fetchTodayRates();
-      const yesterdayRates = await fetchYesterdayRates();
+      const {todayRates, yesterdayRates} = await fetchTodayAndYesterdayRates();
 
-      const todayData = todayRates.filter(rate =>
-        ['USD', 'EUR', 'GBP', 'CZK', 'UAH', 'CHF', 'NOK', 'CNY'].includes(
-          rate.code,
-        ),
-      );
-
-      const dataWithTrend = todayData.map(todayRate => {
-        const yesterdayRate = yesterdayRates.find(
-          yRate => yRate.code === todayRate.code,
-        );
-        const trend = yesterdayRate ? todayRate.mid - yesterdayRate.mid : null;
-        return {...todayRate, trend};
-      });
+      const dataWithTrend = todayRates
+        .filter(rate => resources.currencyCodes.includes(rate.code))
+        .map(todayRate => {
+          const yesterdayRate = yesterdayRates.find(
+            yRate => yRate.code === todayRate.code,
+          );
+          const trend = yesterdayRate
+            ? todayRate.mid - yesterdayRate.mid
+            : null;
+          return {...todayRate, trend};
+        });
 
       setCurrencyData(dataWithTrend);
     } catch (error) {
-      console.error(error);
+      console.error('Error fetching currency data:', error);
     } finally {
       setLoading(false);
     }
   };
 
+  const getTrendStyle = (trend: number | null) => {
+    if (trend === null) return styles.currencyName;
+    return trend.toFixed(resources.decimalRounding) === '0.00'
+      ? styles.currencyName
+      : trend >= 0
+      ? styles.positiveTrend
+      : styles.negativeTrend;
+  };
+
+  const getTrendValue = (trend: number | null) => {
+    if (trend === null) return '—';
+    return trend.toFixed(resources.decimalRounding) === '0.00'
+      ? '—'
+      : trend >= 0
+      ? `+${trend.toFixed(resources.decimalRounding)}`
+      : trend.toFixed(resources.decimalRounding);
+  };
+
   useEffect(() => {
-    fetchCurrencyData(); // Первоначальная загрузка данных
-
-    const interval = setInterval(() => {
-      fetchCurrencyData(); // Периодическое обновление данных
-    }, 60000); // 60000 мс = 1 минута
-
-    return () => clearInterval(interval); // Очистка интервала при размонтировании компонента
+    fetchCurrencyData();
+    const interval = setInterval(fetchCurrencyData, resources.updateFrequency);
+    return () => clearInterval(interval);
   }, []);
 
   return (
@@ -66,9 +80,9 @@ const CurrencyRatesScreen = () => {
         </View>
       ) : (
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>Walutomierz</Text>
+          <Text style={styles.headerTitle}>{resources.texts.headerTitle}</Text>
           <Text style={styles.headerSubtitle}>
-            Dane są automatycznie aktualizowane co minutę
+            {resources.texts.headerSubtitle}
           </Text>
           <FlatList
             data={currencyData}
@@ -80,21 +94,12 @@ const CurrencyRatesScreen = () => {
                 <Text style={styles.currencyName}>
                   {getModifiedName(item.code, item.currency)}
                 </Text>
-                <Text style={styles.currencyRate}>{`${item.mid.toFixed(
-                  2,
-                )}`}</Text>
-                {item.trend !== null && (
-                  <Text
-                    style={
-                      item.trend >= 0
-                        ? styles.positiveTrend
-                        : styles.negativeTrend
-                    }>
-                    {item.trend >= 0
-                      ? `+${item.trend.toFixed(2)}`
-                      : item.trend.toFixed(2)}
-                  </Text>
-                )}
+                <Text style={styles.currencyRate}>
+                  {item.mid.toFixed(resources.decimalRounding)}
+                </Text>
+                <Text style={getTrendStyle(item.trend)}>
+                  {getTrendValue(item.trend)}
+                </Text>
               </View>
             )}
             contentContainerStyle={styles.listContent}
