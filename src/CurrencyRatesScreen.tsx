@@ -8,10 +8,9 @@ import {
   SafeAreaView,
 } from 'react-native';
 import { currencyStore } from './CurrencyStore';
-import { getModifiedName } from './utils';
 import { styles } from './styles';
 import resources from './resources.json';
-import { Rate } from './CurrencyService';
+import CurrencyCard from './CurrencyCard';
 
 const CurrencyRatesScreen: React.FC = observer(() => {
   useEffect(() => {
@@ -22,22 +21,6 @@ const CurrencyRatesScreen: React.FC = observer(() => {
     );
     return () => clearInterval(interval);
   }, []);
-
-  const getTrendStyle = (trend: number | null) => {
-    return trend === null || trend.toFixed(resources.decimalRounding) === '0.00'
-      ? styles.currencyName
-      : trend >= 0
-      ? styles.positiveTrend
-      : styles.negativeTrend;
-  };
-
-  const getTrendValue = (trend: number | null) => {
-    return trend === null || trend.toFixed(resources.decimalRounding) === '0.00'
-      ? '—'
-      : trend >= 0
-      ? `+${trend.toFixed(resources.decimalRounding)}`
-      : trend.toFixed(resources.decimalRounding);
-  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -54,21 +37,9 @@ const CurrencyRatesScreen: React.FC = observer(() => {
           <FlatList
             data={currencyStore.rates}
             horizontal={false}
-            keyExtractor={(item: Rate) => item.code}
+            keyExtractor={item => item.code}
             numColumns={2}
-            renderItem={({ item }) => (
-              <View style={styles.currencyCard}>
-                <Text style={styles.currencyName}>
-                  {getModifiedName(item.code, item.currency)}
-                </Text>
-                <Text style={styles.currencyRate}>
-                  {item.mid.toFixed(resources.decimalRounding)}
-                </Text>
-                <Text style={getTrendStyle(item.trend)}>
-                  {getTrendValue(item.trend)}
-                </Text>
-              </View>
-            )}
+            renderItem={({ item }) => <CurrencyCard rate={item} />}
             contentContainerStyle={styles.listContent}
           />
         </View>

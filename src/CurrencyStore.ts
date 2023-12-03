@@ -1,6 +1,7 @@
 import { makeAutoObservable } from 'mobx';
-import { fetchRates, Rate, RatesResponse } from './CurrencyService';
+import { fetchRates, RatesResponse } from './CurrencyService';
 import resources from './resources.json';
+import { Rate } from './Rate'; // Путь к файлу может отличаться в зависимости от вашей структуры проекта
 
 class CurrencyStore {
   rates: Rate[] = [];

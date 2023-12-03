@@ -1,10 +1,5 @@
 import axios from 'axios';
-
-export interface Rate {
-  currency: string;
-  code: string;
-  mid: number;
-}
+import { Rate } from './Rate'; // Путь к файлу может отличаться в зависимости от вашей структуры проекта
 
 export interface RatesResponse {
   rates: Rate[];

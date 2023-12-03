@@ -1,7 +1,7 @@
 {
-  "currencyCodes": ["USD", "EUR", "GBP", "CZK", "UAH", "CHF", "NOK", "CNY"],
+  "currencyCodes": ["USD", "EUR", "GBP", "CZK", "UAH", "CHF", "NOK", "DKK"],
   "decimalRounding": 2,
-  "updateFrequency": 60000,
+  "updateFrequency": 9960000,
   "texts": {
     "headerTitle": "Walutomierz",
     "headerSubtitle": "Dane są automatycznie aktualizowane co minutę"
