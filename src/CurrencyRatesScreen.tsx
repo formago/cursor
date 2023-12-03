@@ -1,5 +1,5 @@
-import React, {useEffect} from 'react';
-import {observer} from 'mobx-react';
+import React, { useEffect } from 'react';
+import { observer } from 'mobx-react';
 import {
   View,
   Text,
@@ -7,11 +7,11 @@ import {
   FlatList,
   SafeAreaView,
 } from 'react-native';
-import {currencyStore} from './CurrencyStore';
-import {getModifiedName} from './utils';
-import {styles} from './styles';
+import { currencyStore } from './CurrencyStore';
+import { getModifiedName } from './utils';
+import { styles } from './styles';
 import resources from './resources.json';
-import {Rate} from './CurrencyService';
+import { Rate } from './CurrencyService';
 
 const CurrencyRatesScreen: React.FC = observer(() => {
   useEffect(() => {
@@ -56,7 +56,7 @@ const CurrencyRatesScreen: React.FC = observer(() => {
             horizontal={false}
             keyExtractor={(item: Rate) => item.code}
             numColumns={2}
-            renderItem={({item}) => (
+            renderItem={({ item }) => (
               <View style={styles.currencyCard}>
                 <Text style={styles.currencyName}>
                   {getModifiedName(item.code, item.currency)}

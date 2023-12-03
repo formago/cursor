@@ -1,5 +1,5 @@
-import {makeAutoObservable} from 'mobx';
-import {fetchRates, Rate, RatesResponse} from './CurrencyService';
+import { makeAutoObservable } from 'mobx';
+import { fetchRates, Rate, RatesResponse } from './CurrencyService';
 import resources from './resources.json';
 
 class CurrencyStore {
@@ -40,7 +40,7 @@ class CurrencyStore {
           yRate => yRate.code === todayRate.code,
         );
         const trend = yesterdayRate ? todayRate.mid - yesterdayRate.mid : null;
-        return {...todayRate, trend};
+        return { ...todayRate, trend };
       });
   };
 

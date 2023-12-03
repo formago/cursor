@@ -1,4 +1,4 @@
-import {fetchRates} from '../CurrencyService';
+import { fetchRates } from '../CurrencyService';
 
 describe('fetchRates', () => {
   it('fetches rates successfully from an API', async () => {
