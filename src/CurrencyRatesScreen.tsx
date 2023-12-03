@@ -7,12 +7,13 @@ import {
   FlatList,
   SafeAreaView,
 } from 'react-native';
+import {currencyStore} from './CurrencyStore';
 import {getModifiedName} from './utils';
 import {styles} from './styles';
-import {currencyStore} from './CurrencyStore';
 import resources from './resources.json';
+import {Rate} from './CurrencyService';
 
-const CurrencyRatesScreen = observer(() => {
+const CurrencyRatesScreen: React.FC = observer(() => {
   useEffect(() => {
     currencyStore.fetchCurrencyData();
     const interval = setInterval(
@@ -21,6 +22,22 @@ const CurrencyRatesScreen = observer(() => {
     );
     return () => clearInterval(interval);
   }, []);
+
+  const getTrendStyle = (trend: number | null) => {
+    return trend === null || trend.toFixed(resources.decimalRounding) === '0.00'
+      ? styles.currencyName
+      : trend >= 0
+      ? styles.positiveTrend
+      : styles.negativeTrend;
+  };
+
+  const getTrendValue = (trend: number | null) => {
+    return trend === null || trend.toFixed(resources.decimalRounding) === '0.00'
+      ? '—'
+      : trend >= 0
+      ? `+${trend.toFixed(resources.decimalRounding)}`
+      : trend.toFixed(resources.decimalRounding);
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -37,7 +54,7 @@ const CurrencyRatesScreen = observer(() => {
           <FlatList
             data={currencyStore.rates}
             horizontal={false}
-            keyExtractor={item => item.code}
+            keyExtractor={(item: Rate) => item.code}
             numColumns={2}
             renderItem={({item}) => (
               <View style={styles.currencyCard}>
@@ -59,23 +76,5 @@ const CurrencyRatesScreen = observer(() => {
     </SafeAreaView>
   );
 });
-
-const getTrendStyle = (trend: number | null) => {
-  if (trend === null) return styles.currencyName;
-  return trend.toFixed(resources.decimalRounding) === '0.00'
-    ? styles.currencyName
-    : trend >= 0
-    ? styles.positiveTrend
-    : styles.negativeTrend;
-};
-
-const getTrendValue = (trend: number | null) => {
-  if (trend === null) return '—';
-  return trend.toFixed(resources.decimalRounding) === '0.00'
-    ? '—'
-    : trend >= 0
-    ? `+${trend.toFixed(resources.decimalRounding)}`
-    : trend.toFixed(resources.decimalRounding);
-};
 
 export default CurrencyRatesScreen;

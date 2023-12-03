@@ -1,13 +1,6 @@
 import {makeAutoObservable} from 'mobx';
-import {fetchRates} from './CurrencyService';
+import {fetchRates, Rate, RatesResponse} from './CurrencyService';
 import resources from './resources.json';
-
-interface Rate {
-  currency: string;
-  code: string;
-  mid: number;
-  trend?: number | null;
-}
 
 class CurrencyStore {
   rates: Rate[] = [];
@@ -17,27 +10,18 @@ class CurrencyStore {
     makeAutoObservable(this);
   }
 
-  fetchCurrencyData = async () => {
+  public fetchCurrencyData = async () => {
     this.setLoading(true);
     try {
-      const todayResponse = await fetchRates();
-      const yesterdayResponse = await fetchRates(
+      const todayResponse: RatesResponse[] = await fetchRates();
+      const yesterdayResponse: RatesResponse[] = await fetchRates(
         this.getPreviousDate(todayResponse[0].effectiveDate),
       );
-
-      const dataWithTrend = todayResponse[0].rates
-        .filter(rate => resources.currencyCodes.includes(rate.code))
-        .map(todayRate => {
-          const yesterdayRate = yesterdayResponse[0].rates.find(
-            yRate => yRate.code === todayRate.code,
-          );
-          const trend = yesterdayRate
-            ? todayRate.mid - yesterdayRate.mid
-            : null;
-          return {...todayRate, trend};
-        });
-
-      this.setRates(dataWithTrend);
+      const processedRates: Rate[] = this.processRates(
+        todayResponse[0].rates,
+        yesterdayResponse[0].rates,
+      );
+      this.setRates(processedRates);
     } catch (error) {
       console.error('Error fetching currency data:', error);
     } finally {
@@ -45,18 +29,33 @@ class CurrencyStore {
     }
   };
 
-  setRates = (rates: Rate[]) => {
-    this.rates = rates;
-  };
-
-  setLoading = (loading: boolean) => {
-    this.loading = loading;
+  private processRates = (
+    todayRates: Rate[],
+    yesterdayRates: Rate[],
+  ): Rate[] => {
+    return todayRates
+      .filter(rate => resources.currencyCodes.includes(rate.code))
+      .map(todayRate => {
+        const yesterdayRate = yesterdayRates.find(
+          yRate => yRate.code === todayRate.code,
+        );
+        const trend = yesterdayRate ? todayRate.mid - yesterdayRate.mid : null;
+        return {...todayRate, trend};
+      });
   };
 
   private getPreviousDate = (dateString: string): string => {
     const date = new Date(dateString);
     date.setDate(date.getDate() - 1);
     return date.toISOString().split('T')[0];
+  };
+
+  public setRates = (rates: Rate[]) => {
+    this.rates = rates;
+  };
+
+  public setLoading = (loading: boolean) => {
+    this.loading = loading;
   };
 }
 
