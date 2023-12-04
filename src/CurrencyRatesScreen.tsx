@@ -11,6 +11,7 @@ import { currencyStore } from './CurrencyStore';
 import { styles } from './styles';
 import resources from './resources.json';
 import CurrencyCard from './CurrencyCard';
+import ErrorScreen from './ErrorScreen';
 
 const CurrencyRatesScreen: React.FC = observer(() => {
   useEffect(() => {
@@ -21,6 +22,10 @@ const CurrencyRatesScreen: React.FC = observer(() => {
     );
     return () => clearInterval(interval);
   }, []);
+
+  if (currencyStore.error) {
+    return <ErrorScreen />;
+  }
 
   return (
     <SafeAreaView style={styles.safeArea}>

@@ -1,12 +1,13 @@
 import axios, { AxiosError } from 'axios';
 import { Rate } from './Rate'; // Путь к файлу может отличаться в зависимости от вашей структуры проекта
+import resources from './resources.json';
 
 export interface RatesResponse {
   rates: Rate[];
   effectiveDate: string;
 }
 
-const MAX_RECURSIVE_CALLS = 7;
+const MAX_RECURSIVE_CALLS = resources.maxRecursiveCalls;
 
 export async function fetchRates(
   date?: string,

@@ -6,13 +6,19 @@ import { Rate } from './Rate';
 class CurrencyStore {
   rates: Rate[] = [];
   loading: boolean = true;
+  error: string | null = null;
 
   constructor() {
     makeAutoObservable(this);
   }
 
+  private setError = (message: string | null) => {
+    this.error = message;
+  };
+
   public fetchCurrencyData = async () => {
     this.setLoading(true);
+    this.setError(null);
     try {
       const todayResponse = await fetchRates();
       const yesterdayResponse = await fetchRates(
@@ -24,6 +30,7 @@ class CurrencyStore {
       );
       this.setRates(processedRates);
     } catch (error) {
+      this.setError(resources.errorScreenMessage);
       console.error('Error fetching currency data:', error);
     } finally {
       this.setLoading(false);
