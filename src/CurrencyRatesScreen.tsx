@@ -36,7 +36,6 @@ const CurrencyRatesScreen: React.FC = observer(() => {
           </Text>
           <FlatList
             data={currencyStore.rates}
-            horizontal={false}
             keyExtractor={item => item.code}
             numColumns={2}
             renderItem={({ item }) => <CurrencyCard rate={item} />}

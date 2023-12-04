@@ -1,7 +1,7 @@
 import { makeAutoObservable } from 'mobx';
-import { fetchRates, RatesResponse } from './CurrencyService';
+import { fetchRates } from './CurrencyService';
 import resources from './resources.json';
-import { Rate } from './Rate'; // Путь к файлу может отличаться в зависимости от вашей структуры проекта
+import { Rate } from './Rate';
 
 class CurrencyStore {
   rates: Rate[] = [];
@@ -14,13 +14,13 @@ class CurrencyStore {
   public fetchCurrencyData = async () => {
     this.setLoading(true);
     try {
-      const todayResponse: RatesResponse[] = await fetchRates();
-      const yesterdayResponse: RatesResponse[] = await fetchRates(
-        this.getPreviousDate(todayResponse[0].effectiveDate),
+      const todayResponse = await fetchRates();
+      const yesterdayResponse = await fetchRates(
+        this.getPreviousDate(todayResponse.effectiveDate),
       );
-      const processedRates: Rate[] = this.processRates(
-        todayResponse[0].rates,
-        yesterdayResponse[0].rates,
+      const processedRates = this.processRates(
+        todayResponse.rates,
+        yesterdayResponse.rates,
       );
       this.setRates(processedRates);
     } catch (error) {

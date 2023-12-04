@@ -13,6 +13,7 @@ export const styles = StyleSheet.create({
   header: {
     padding: 5,
     alignItems: 'flex-start',
+    paddingBottom: 150,
   },
   headerTitle: {
     fontSize: 34,

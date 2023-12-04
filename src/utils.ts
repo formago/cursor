@@ -1,3 +1,4 @@
+import { Rate } from './Rate'; // Путь к файлу может отличаться в зависимости от вашей структуры проекта
 import { styles } from './styles';
 import resources from './resources.json';
 
