@@ -1,6 +1,6 @@
 import axios, { AxiosError } from 'axios';
-import { Rate } from './Rate'; // Путь к файлу может отличаться в зависимости от вашей структуры проекта
-import resources from './resources.json';
+import { Rate } from '../models/Rate'; // Путь к файлу может отличаться в зависимости от вашей структуры проекта
+import resources from '../resources/resources.json';
 
 export interface RatesResponse {
   rates: Rate[];

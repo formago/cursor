@@ -1,6 +1,6 @@
-import { Rate } from './Rate'; // Путь к файлу может отличаться в зависимости от вашей структуры проекта
-import { styles } from './styles';
-import resources from './resources.json';
+import { Rate } from './models/Rate'; // Путь к файлу может отличаться в зависимости от вашей структуры проекта
+import { styles } from './styles/styles';
+import resources from './resources/resources.json';
 
 /**
  * Modifies the currency name based on the code.

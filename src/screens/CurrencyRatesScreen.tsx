@@ -7,11 +7,11 @@ import {
   FlatList,
   SafeAreaView,
 } from 'react-native';
-import { currencyStore } from './CurrencyStore';
-import { styles } from './styles';
-import resources from './resources.json';
-import CurrencyCard from './CurrencyCard';
-import ErrorScreen from './ErrorScreen';
+import { currencyStore } from '../stores/CurrencyStore';
+import { styles } from '../styles/styles';
+import resources from '../resources/resources.json';
+import CurrencyCard from '../components/CurrencyCard';
+import ErrorScreen from '../components/ErrorScreen';
 
 const CurrencyRatesScreen: React.FC = observer(() => {
   useEffect(() => {

@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import { styles } from './styles';
-import { Rate } from './CurrencyService';
-import { getModifiedName, getTrendStyle, getTrendValue } from './utils';
-import resources from './resources.json';
+import { styles } from '../styles/styles';
+import { Rate } from '../models/Rate';
+import { getModifiedName, getTrendStyle, getTrendValue } from '../utils';
+import resources from '../resources/resources.json';
 
 interface CurrencyCardProps {
   rate: Rate;

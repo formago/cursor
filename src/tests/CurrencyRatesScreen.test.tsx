@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import CurrencyRatesScreen from '../CurrencyRatesScreen';
-import { currencyStore } from '../CurrencyStore';
+import CurrencyRatesScreen from '../screens/CurrencyRatesScreen';
+import { currencyStore } from '../stores/CurrencyStore';
 
 jest.mock('./CurrencyStore', () => ({
   currencyStore: {

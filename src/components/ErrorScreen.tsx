@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, Button } from 'react-native';
-import resources from './resources.json';
-import { currencyStore } from './CurrencyStore';
+import resources from '../resources/resources.json';
+import { currencyStore } from '../stores/CurrencyStore';
 
 const ErrorScreen = () => {
   const handleRetry = () => {

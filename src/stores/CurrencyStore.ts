@@ -1,7 +1,7 @@
 import { makeAutoObservable } from 'mobx';
-import { fetchRates } from './CurrencyService';
-import resources from './resources.json';
-import { Rate } from './Rate';
+import { fetchRates } from '../services/CurrencyService';
+import resources from '../resources/resources.json';
+import { Rate } from '../models/Rate';
 
 class CurrencyStore {
   rates: Rate[] = [];
