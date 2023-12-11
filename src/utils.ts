@@ -11,7 +11,9 @@ import resources from './resources/resources.json';
 export const getModifiedName = (code: string, name: string): string => {
   switch (code) {
     case 'USD':
-      return 'Dollar';
+      return 'Dolar';
+    case 'GBP':
+      return 'Funt Brytyjski';
     // Добавьте дополнительные случаи для других кодов валют, если необходимо.
     default:
       return name.charAt(0).toUpperCase() + name.slice(1);
