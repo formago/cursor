@@ -1,5 +1,5 @@
 import axios, { AxiosError } from 'axios';
-import { Rate } from '../models/Rate'; // Путь к файлу может отличаться в зависимости от вашей структуры проекта
+import { Rate } from '../models/Rate';
 import resources from '../resources/resources.json';
 
 export interface RatesResponse {
@@ -8,15 +8,14 @@ export interface RatesResponse {
 }
 
 const MAX_RECURSIVE_CALLS = resources.maxRecursiveCalls;
+const BASE_URL = 'https://cursor-mu.vercel.app/api/rates';
 
 export async function fetchRates(
   date?: string,
   attempts: number = 0,
 ): Promise<RatesResponse> {
   try {
-    const url = date
-      ? `https://api.nbp.pl/api/exchangerates/tables/A/${date}/?format=json`
-      : 'https://api.nbp.pl/api/exchangerates/tables/A/?format=json';
+    const url = date ? `${BASE_URL}/A/${date}` : `${BASE_URL}/A`;
     const response = await axios.get<RatesResponse[]>(url);
     return response.data[0];
   } catch (error) {
